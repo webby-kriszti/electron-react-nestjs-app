@@ -1,0 +1,12 @@
+{
+  "name": "electron-react-nestjs-app",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "concurrently \"npm run start:api\" \"npm run start:client\"",
+    "start:api": "cd api && npm run start:dev",
+    "start:client": "cd client && npm run dev"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0"
+  }
+}

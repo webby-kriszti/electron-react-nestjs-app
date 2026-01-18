@@ -1,34 +1,33 @@
-import Versions from './components/Versions'
-import electronLogo from './assets/electron.svg'
+import { useState, useEffect, ReactElement } from 'react'
 
-function App(): React.JSX.Element {
-  const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
+
+function App(): ReactElement {
+  const [message, setMessage] = useState('Kapcsolódás a szerverhez...')
+
+  useEffect(() => {
+    // Itt szólítjuk meg a NestJS-t a 3000-es porton
+    fetch('http://127.0.0.1:3000')
+      .then((response) => response.text())
+      .then((data) => setMessage(data)) // Ha sikerül, beírjuk az üzenetet
+      .catch((error) => setMessage('Hiba történt: ' + error))
+  }, [])
 
   return (
-    <>
-      <img alt="logo" className="logo" src={electronLogo} />
-      <div className="creator">Powered by electron-vite</div>
-      <div className="text">
-        Build an Electron app with <span className="react">React</span>
-        &nbsp;and <span className="ts">TypeScript</span>
+    <div style={{ padding: '20px', textAlign: 'center' }}>
+      <h1>Rendszer Teszt</h1>
+      <div
+        style={{
+          padding: '20px',
+          backgroundColor: '#333',
+          color: '#fff',
+          borderRadius: '8px',
+          marginTop: '20px'
+        }}
+      >
+        <h3>Szerver válasza:</h3>
+        <p style={{ fontSize: '24px', color: '#4caf50' }}>{message}</p>
       </div>
-      <p className="tip">
-        Please try pressing <code>F12</code> to open the devTool
-      </p>
-      <div className="actions">
-        <div className="action">
-          <a href="https://electron-vite.org/" target="_blank" rel="noreferrer">
-            Documentation
-          </a>
-        </div>
-        <div className="action">
-          <a target="_blank" rel="noreferrer" onClick={ipcHandle}>
-            Send IPC
-          </a>
-        </div>
-      </div>
-      <Versions></Versions>
-    </>
+    </div>
   )
 }
 
