@@ -1,8 +1,9 @@
-import { ElectronAPI } from '@electron-toolkit/preload'
+export interface IElectronAPI {
+  sendFrequency: (value: number) => Promise<string>
+}
 
 declare global {
   interface Window {
-    electron: ElectronAPI
-    api: unknown
+    api: IElectronAPI
   }
 }
