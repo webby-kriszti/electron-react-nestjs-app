@@ -1,120 +1,220 @@
-import { ReactElement, useState } from 'react'
-import { WeatherData } from '../../../../api/src/weatherModule/weather.service'
+import React, { useMemo, useState } from 'react'
 
-function App(): ReactElement {
-  const [nev, setNev] = useState('') // Itt tároljuk, amit beírsz
-  const [valasz, setValasz] = useState('Itt jelenik meg a válasz...')
-  const [weatherDatas, setWeatherDatas] = useState<WeatherData[]>([])
-  const [frequency, setFrequency] = useState(10)
+type TabId = 'legacy' | 'map_marker' | 'map_circle' | 'zustand'
 
-  // Ez a függvény fut le, ha megnyomod a gombot
-  const kuldes = async (): Promise<void> => {
-    try {
-      const response = await fetch('http://127.0.0.1:3000/koszonj', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ nev: nev }) // Itt küldjük el a nevet JSON-ként
-      })
+type TabDef = {
+  id: TabId
+  label: string
+}
 
-      const data = await response.text()
-      setValasz(data) // A választ kiírjuk
-    } catch (error) {
-      setValasz(`Error: ${error}`)
-    }
-  }
-  const getWeatherData = async (): Promise<void> => {
-    try {
-      const result = await fetch('http://127.0.0.1:3000/weather/measurements', {
-        method: 'Get'
-      })
-      if (!result.ok) {
-        throw new Error(`Hiba történt: ${result.status}`)
-      }
-      const data = await result.json()
-      console.log(data)
-      setWeatherDatas(data)
-    } catch (error) {
-      console.error(error)
-    }
-  }
-  const sendFrequency = async (): Promise<void> => {
-    try {
-      const result = await window.api.sendFrequency(frequency)
-      console.log(result)
-    } catch (error) {
-      console.error(error)
-    }
-  }
+const TABS: TabDef[] = [
+  { id: 'legacy', label: 'Régi' },
+  { id: 'map_marker', label: 'MapLibre – Marker' },
+  { id: 'map_circle', label: 'MapLibre – Kör (Turf)' },
+  { id: 'zustand', label: 'Zustand' }
+]
 
+function TabButton({
+  active,
+  onClick,
+  children
+}: {
+  active: boolean
+  onClick: () => void
+  children: React.ReactNode
+}) {
   return (
-    <div style={{ padding: '40px', textAlign: 'center', color: 'white' }}>
-      <h1>Üdvözlő Gép</h1>
+    <button
+      onClick={onClick}
+      style={{
+        appearance: 'none',
+        border: '1px solid #ccc',
+        borderBottom: active ? '2px solid #000' : '1px solid #ccc',
+        background: active ? '#fff' : '#f6f6f6',
+        padding: '10px 12px',
+        borderRadius: 8,
+        cursor: 'pointer',
+        fontWeight: active ? 700 : 500
+      }}
+    >
+      {children}
+    </button>
+  )
+}
 
-      <div style={{ marginBottom: '20px' }}>
-        <input
-          type="text"
-          placeholder="Írd ide a neved..."
-          value={nev}
-          onChange={(e) => setNev(e.target.value)}
-          style={{ padding: '10px', fontSize: '16px', borderRadius: '5px', border: 'none' }}
-        />
-
-        <button
-          onClick={kuldes}
-          style={{
-            padding: '10px 20px',
-            fontSize: '16px',
-            marginLeft: '10px',
-            backgroundColor: '#4caf50',
-            color: 'white',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer'
-          }}
-        >
-          Küldés
-        </button>
-      </div>
-
-      <div
-        style={{
-          padding: '20px',
-          backgroundColor: '#333',
-          borderRadius: '10px',
-          border: '1px solid #555'
-        }}
-      >
-        <h3>Szerver üzenete:</h3>
-        <p style={{ fontSize: '20px', color: '#61dafb' }}>{valasz}</p>
-      </div>
-      <div>
-        <button onClick={getWeatherData}>get saved weather data</button>
-      </div>
-      <div style={{ marginTop: '20px' }}>
-        <h3>Mérési napló:</h3>
-
-        {/* Itt járjuk be a listát */}
-        {weatherDatas.map((data) => (
-          <div key={data.id} style={{ borderBottom: '1px solid #555', padding: '10px' }}>
-            <strong>Idő:</strong> {data.time} <br />
-            <strong>Hőfok:</strong> {data.temperature} °C <br />
-            <strong>Pára:</strong> {data.humidity} %
-          </div>
-        ))}
-      </div>
-      <div>
-        <input
-          type="text"
-          placeholder="enter data"
-          value={frequency}
-          onChange={(e) => setFrequency(Number(e.target.value))}
-        ></input>
-        <button onClick={sendFrequency}>send</button>
+/**
+ * IDE fogod betenni a meglévő "rendezetlen" App tartalmad.
+ * 1) Nyiss egy LegacyView.tsx-et, és tedd át oda.
+ * 2) Itt importáld és rendereld.
+ *
+ * Most direkt placeholder, hogy gyorsan induljunk.
+ */
+function LegacyView() {
+  return (
+    <div style={{ padding: 12 }}>
+      <h2 style={{ margin: '0 0 8px 0' }}>Régi nézet</h2>
+      <div style={{ opacity: 0.8 }}>
+        Ide rakd át a meglévő App tartalmad (komponensbe kiszedve).
       </div>
     </div>
   )
 }
 
-export default App
+/**
+ * Ma ide fogjuk berakni a MapLibre minimumot.
+ * Most placeholder.
+ */
+import maplibregl, { Map, Marker } from 'maplibre-gl'
+import { useEffect, useRef } from 'react'
+
+function MapLibreMarkerView() {
+  const mapContainerRef = useRef<HTMLDivElement | null>(null)
+  const mapRef = useRef<Map | null>(null)
+  const markerRef = useRef<Marker | null>(null)
+
+  useEffect(() => {
+    if (!mapContainerRef.current) return
+    if (mapRef.current) return // ne hozd létre kétszer (StrictMode)
+
+    const center: [number, number] = [19.040235, 47.497913] // lon, lat (Budapest)
+
+    const map = new maplibregl.Map({
+      container: mapContainerRef.current,
+      style: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
+      center,
+      zoom: 6
+    })
+    map.on('load', () => {
+      const layers = map.getStyle().layers ?? []
+      console.log('layer count:', layers.length)
+      console.log(
+        'sample layer ids:',
+        layers.slice(0, 20).map((l) => l.id)
+      )
+    })
+
+    mapRef.current = map
+
+    // Marker
+    const marker = new maplibregl.Marker().setLngLat(center).addTo(map)
+    markerRef.current = marker
+
+    return () => {
+      // cleanup: ha a komponens unmountol (ablak/tab váltás, reload)
+      markerRef.current?.remove()
+      mapRef.current?.remove()
+      markerRef.current = null
+      mapRef.current = null
+    }
+  }, [])
+  useEffect(() => {
+    if (!mapRef.current) return
+
+    // tabváltás után újraszámoljuk a map méretét
+    setTimeout(() => {
+      mapRef.current?.resize()
+    }, 0)
+  })
+
+  return (
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ padding: 12 }}>
+        <h2 style={{ margin: '0 0 8px 0' }}>MapLibre – Marker</h2>
+        <div style={{ opacity: 0.8 }}>
+          1 térkép + 1 marker (lon/lat). Következő: dinamikus koordináta.
+        </div>
+      </div>
+
+      <div style={{ flex: 1, minHeight: 0 }}>
+        <div
+          ref={mapContainerRef}
+          style={{ height: '100%', width: '100%', borderTop: '1px solid #e5e5e5' }}
+        />
+      </div>
+    </div>
+  )
+}
+
+function MapLibreCircleView() {
+  return (
+    <div style={{ padding: 12 }}>
+      <h2 style={{ margin: '0 0 8px 0' }}>MapLibre – Kör (Turf)</h2>
+      <div style={{ opacity: 0.8 }}>
+        Később: Turf-ből generált kör GeoJSON + MapLibre source/layer.
+      </div>
+    </div>
+  )
+}
+
+function ZustandView() {
+  return (
+    <div style={{ padding: 12 }}>
+      <h2 style={{ margin: '0 0 8px 0' }}>Zustand</h2>
+      <div style={{ opacity: 0.8 }}>
+        Később: store + selector + subscribe, és rákötjük a map frissítésre.
+      </div>
+    </div>
+  )
+}
+
+function Content({ tab }: { tab: TabId }) {
+  switch (tab) {
+    case 'legacy':
+      return <LegacyView />
+    case 'map_marker':
+      return <MapLibreMarkerView />
+    case 'map_circle':
+      return <MapLibreCircleView />
+    case 'zustand':
+      return <ZustandView />
+    default:
+      return null
+  }
+}
+
+export default function App() {
+  const [tab, setTab] = useState<TabId>('legacy')
+
+  const activeLabel = useMemo(() => {
+    return TABS.find((t) => t.id === tab)?.label ?? ''
+  }, [tab])
+
+  return (
+    <div
+      style={{
+        height: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        fontFamily:
+          'system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji"'
+      }}
+    >
+      {/* Top bar */}
+      <div
+        style={{
+          padding: 12,
+          borderBottom: '1px solid #e5e5e5',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 12
+        }}
+      >
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          {TABS.map((t) => (
+            <TabButton key={t.id} active={t.id === tab} onClick={() => setTab(t.id)}>
+              {t.label}
+            </TabButton>
+          ))}
+        </div>
+
+        <div style={{ opacity: 0.7, fontSize: 13 }}>{activeLabel}</div>
+      </div>
+
+      {/* Content */}
+      <div style={{ flex: 1, minHeight: 0 }}>
+        <Content tab={tab} />
+      </div>
+    </div>
+  )
+}

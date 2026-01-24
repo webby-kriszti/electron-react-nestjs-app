@@ -4,10 +4,38 @@
     <meta charset="UTF-8" />
     <title>Electron</title>
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' http://127.0.0.1:3000;"
-    />
+   <meta
+  http-equiv="Content-Security-Policy"
+  content="
+    default-src 'self';
+    script-src 'self' 'unsafe-inline';
+    style-src 'self' 'unsafe-inline';
+    img-src
+      'self'
+      data:
+      https://demotiles.maplibre.org
+      https://basemaps.cartocdn.com
+      https://tiles.basemaps.cartocdn.com
+      https://tiles-a.basemaps.cartocdn.com
+      https://tiles-b.basemaps.cartocdn.com
+      https://tiles-c.basemaps.cartocdn.com
+      https://tiles-d.basemaps.cartocdn.com;
+    connect-src
+      'self'
+      http://127.0.0.1:3000
+      https://demotiles.maplibre.org
+      https://basemaps.cartocdn.com
+      https://tiles.basemaps.cartocdn.com
+      https://tiles-a.basemaps.cartocdn.com
+      https://tiles-b.basemaps.cartocdn.com
+      https://tiles-c.basemaps.cartocdn.com
+      https://tiles-d.basemaps.cartocdn.com;
+    worker-src
+      'self'
+      blob:;
+  "
+/>
+
   </head>
 
   <body>
