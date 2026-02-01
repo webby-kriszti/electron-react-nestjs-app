@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react'
+import { MapLibreMarkerView } from './features/maplibre/MapLibreMarkerView'
 
 type TabId = 'legacy' | 'map_marker' | 'map_circle' | 'zustand'
 
@@ -55,81 +56,6 @@ function LegacyView() {
       <h2 style={{ margin: '0 0 8px 0' }}>Régi nézet</h2>
       <div style={{ opacity: 0.8 }}>
         Ide rakd át a meglévő App tartalmad (komponensbe kiszedve).
-      </div>
-    </div>
-  )
-}
-
-/**
- * Ma ide fogjuk berakni a MapLibre minimumot.
- * Most placeholder.
- */
-import maplibregl, { Map, Marker } from 'maplibre-gl'
-import { useEffect, useRef } from 'react'
-
-function MapLibreMarkerView() {
-  const mapContainerRef = useRef<HTMLDivElement | null>(null)
-  const mapRef = useRef<Map | null>(null)
-  const markerRef = useRef<Marker | null>(null)
-
-  useEffect(() => {
-    if (!mapContainerRef.current) return
-    if (mapRef.current) return // ne hozd létre kétszer (StrictMode)
-
-    const center: [number, number] = [19.040235, 47.497913] // lon, lat (Budapest)
-
-    const map = new maplibregl.Map({
-      container: mapContainerRef.current,
-      style: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
-      center,
-      zoom: 6
-    })
-    map.on('load', () => {
-      const layers = map.getStyle().layers ?? []
-      console.log('layer count:', layers.length)
-      console.log(
-        'sample layer ids:',
-        layers.slice(0, 20).map((l) => l.id)
-      )
-    })
-
-    mapRef.current = map
-
-    // Marker
-    const marker = new maplibregl.Marker().setLngLat(center).addTo(map)
-    markerRef.current = marker
-
-    return () => {
-      // cleanup: ha a komponens unmountol (ablak/tab váltás, reload)
-      markerRef.current?.remove()
-      mapRef.current?.remove()
-      markerRef.current = null
-      mapRef.current = null
-    }
-  }, [])
-  useEffect(() => {
-    if (!mapRef.current) return
-
-    // tabváltás után újraszámoljuk a map méretét
-    setTimeout(() => {
-      mapRef.current?.resize()
-    }, 0)
-  })
-
-  return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ padding: 12 }}>
-        <h2 style={{ margin: '0 0 8px 0' }}>MapLibre – Marker</h2>
-        <div style={{ opacity: 0.8 }}>
-          1 térkép + 1 marker (lon/lat). Következő: dinamikus koordináta.
-        </div>
-      </div>
-
-      <div style={{ flex: 1, minHeight: 0 }}>
-        <div
-          ref={mapContainerRef}
-          style={{ height: '100%', width: '100%', borderTop: '1px solid #e5e5e5' }}
-        />
       </div>
     </div>
   )
