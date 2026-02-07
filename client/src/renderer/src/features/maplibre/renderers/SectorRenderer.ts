@@ -1,7 +1,6 @@
 import type { Map as MlMap } from 'maplibre-gl'
 import type { MapChildRenderer } from '../map/types'
 import * as turf from '@turf/turf'
-import type { Feature, FeatureCollection, Point, Polygon } from 'geojson'
 type Kind = 'sector' | 'centerline'
 
 export class SectorRenderer implements MapChildRenderer {
