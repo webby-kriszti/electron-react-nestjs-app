@@ -3,6 +3,7 @@ import { MapRenderer } from './map/MapRenderer'
 import { MarkerRenderer } from './renderers/MarkerRenderer'
 import { RangeRingsRenderer } from './renderers/RangeRingsRenderer'
 import { SectorRenderer } from './renderers/SectorRenderer'
+import { BeamRenderer } from './renderers/BeamRenderer'
 
 export function MapLibreMarkerView() {
   const containerRef = useRef<HTMLDivElement | null>(null)
@@ -12,6 +13,7 @@ export function MapLibreMarkerView() {
   const markerRendererRef = useRef<MarkerRenderer | null>(null)
   const rangeRingsRendererRef = useRef<RangeRingsRenderer | null>(null)
   const SectorRendererRef = useRef<SectorRenderer | null>(null)
+  const beamRendererRef = useRef<BeamRenderer | null>(null)
 
   useEffect(() => {
     if (!containerRef.current) return
@@ -29,15 +31,24 @@ export function MapLibreMarkerView() {
     const markerRenderer = new MarkerRenderer(center)
     const rangeRingsRenderer = new RangeRingsRenderer('range-rings', center, [5000, 7000, 3000])
     const sectorRenderer = new SectorRenderer('sector', center, 5000, 0)
+    const beamRenderer = new BeamRenderer({
+      sourceId: 'beam',
+      layerId: 'layer',
+      center: center,
+      radiusMeters: 40000,
+      sectorWidthDeg: 90
+    })
 
     mapRenderer.add(markerRenderer)
     mapRenderer.add(rangeRingsRenderer)
     mapRenderer.add(sectorRenderer)
+    mapRenderer.add(beamRenderer)
 
     mapRendererRef.current = mapRenderer
     markerRendererRef.current = markerRenderer
     rangeRingsRendererRef.current = rangeRingsRenderer
     SectorRendererRef.current = sectorRenderer
+    beamRendererRef.current = beamRenderer
 
     return () => {
       mapRendererRef.current?.destroy()
@@ -45,6 +56,7 @@ export function MapLibreMarkerView() {
       markerRendererRef.current = null
       rangeRingsRendererRef.current = null
       SectorRendererRef.current = null
+      beamRendererRef.current = null
     }
   }, [])
 
