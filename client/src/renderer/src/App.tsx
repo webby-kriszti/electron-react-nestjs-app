@@ -1,9 +1,8 @@
 import React, { useMemo, useState } from 'react'
-import { MapLibreMarkerView } from './features/maplibre/MapLibreMarkerView'
-import { Week1Day3Test } from './learning/week1/day3-test'
-import { Week1Day4Test } from './learning/week1/day4-tst'
+import { Week2Day1Test } from './learning/week-2/day1-test'
+import { MaplibreView } from './features/maplibre/MaplibreView'
 
-type TabId = 'legacy' | 'map_marker' | 'map_circle' | 'zustand' | 'learning_w1d2' | 'learning_w1d4'
+type TabId = 'legacy' | 'map_marker' | 'map_circle' | 'zustand' | 'learning_w1d2' | 'learning_w2d1'
 
 type TabDef = {
   id: TabId
@@ -17,7 +16,7 @@ const TABS: TabDef[] = [
   { id: 'zustand', label: 'Zustand' },
   /* { id: 'learning_w1d2', label: 'Learning - Week 1 day 2' }, */
   //{ id: 'learning_w1d3', label: 'Learning - Week 1 Day 3' }
-  { id: 'learning_w1d4', label: 'Learning - Week 1 Day 4' }
+  { id: 'learning_w2d1', label: 'Learning - Week 2 Day 1' }
 ]
 
 function TabButton({
@@ -93,15 +92,15 @@ function Content({ tab }: { tab: TabId }) {
     case 'legacy':
       return <LegacyView />
     case 'map_marker':
-      return <MapLibreMarkerView />
+      return <MaplibreView/>
     case 'map_circle':
       return <MapLibreCircleView />
     case 'zustand':
       return <ZustandView />
     /* case 'learning_w1d2':
       return <Week1Day2Test /> */
-    case 'learning_w1d4':
-      return <Week1Day4Test />
+    case 'learning_w2d1':
+      return <Week2Day1Test />
     default:
       return null
   }

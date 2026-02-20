@@ -8,7 +8,7 @@ export type MapRendererOptions = {
   styleUrl: string
 }
 
-export class MapRenderer {
+export class MapRendererOld {
   private map: MlMap
   private rafId: number | null = null
   private children: MapChildRenderer[] = []

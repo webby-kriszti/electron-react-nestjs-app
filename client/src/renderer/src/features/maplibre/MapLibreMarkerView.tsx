@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
-import { MapRenderer } from './map/MapRenderer'
-import { MarkerRenderer } from './renderers/MarkerRenderer'
+import { MapRenderer } from './map/MapRendererOld'
+import { MarkerRenderer } from './renderers/MarkerRendererOld'
 import { RangeRingsRenderer } from './renderers/RangeRingsRenderer'
 import { SectorRenderer } from './renderers/SectorRenderer'
 import { BeamRenderer } from './renderers/BeamRenderer'
