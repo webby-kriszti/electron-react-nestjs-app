@@ -12,10 +12,13 @@ export class CircleRenderer implements MapChildRenderer {
   private unsubFromPosition: (() => void) | null = null
   constructor(center: [number, number]) {
     this.center = center
-    this.unsubFromPosition = useCityStore.subscribe((state) => {
-      this.center = state.markerPosition
-      this.dirty = true
-    })
+   this.unsubFromPosition = useCityStore.subscribe(
+      (state) => state.markerPosition,
+      (markerPosition) => {
+        this.center = markerPosition
+        this.dirty = true
+      }
+    )
   }
   init(): void {
     this.map!.addSource(this.sourceId, {
@@ -51,11 +54,11 @@ export class CircleRenderer implements MapChildRenderer {
   }
   destroy(): void {
     this.unsubFromPosition?.()
-    if (this.map?.getLayer(this.sourceId)) {
-      this.map.removeLayer(this.sourceId)
-    }
     if (this.map?.getLayer(this.layerId)) {
       this.map.removeLayer(this.layerId)
+    }
+    if (this.map?.getLayer(this.sourceId)) {
+      this.map.removeLayer(this.sourceId)
     }
   }
   setCenter(center: [number, number]): void {

@@ -11,10 +11,13 @@ export class MarkerRenderer implements MapChildRenderer {
   private unsubFromPosition: (() => void) | null = null
   constructor(center: [number, number]) {
     this.center = center
-    this.unsubFromPosition = useCityStore.subscribe((state) => {
-      this.center = state.markerPosition
-      this.dirty = true
-    })
+    this.unsubFromPosition = useCityStore.subscribe(
+      (state) => state.markerPosition,
+      (markerPosition) => {
+        this.center = markerPosition
+        this.dirty = true
+      }
+    )
   }
   init(): void {
     this.marker = new maplibregl.Marker().setLngLat(this.center).addTo(this.map!)

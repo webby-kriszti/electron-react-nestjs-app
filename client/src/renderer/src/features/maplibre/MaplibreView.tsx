@@ -1,11 +1,10 @@
 import { ReactElement, useEffect, useRef } from 'react'
 import { MapRenderer } from '../../features/maplibre/renderers/Maprenderer'
-import { useCityStore } from '@renderer/features/maplibre/stores/CityStore'
+import { cityService } from './stores/citiyService'
 
 export function MaplibreView(): ReactElement {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const mapRendererRef = useRef<MapRenderer | null>(null)
-
 
   useEffect(() => {
     if (containerRef.current === null) return
@@ -21,16 +20,15 @@ export function MaplibreView(): ReactElement {
       mapRendererRef.current = null
     }
   }, [])
-  const debrecen: [number, number] = [21.6273, 47.5316]
-  const budapest: [number, number] = [19.040235, 47.497913]
-  const setPosition = useCityStore((state) => state.setMarkerPosition)
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <div style={{ padding: 12 }}>
         <h2>Week 2 - Day 2: MapRenderer</h2>
-        <button onClick={() => setPosition(debrecen)}>Set new position to Debrecen</button>
-        <button onClick={() => setPosition(budapest)}>Set new position to Budapest</button>
+        <button onClick={() => cityService.selectCity('Debrecen')}>Debrecen</button>
+        <button onClick={() => cityService.selectCity('Budapest')}>Budapest</button>
+        <button onClick={cityService.startSimulation}>Start moving</button>
+        <button onClick={cityService.stopSimulation}>Stop</button>
       </div>
       <div style={{ flex: 1, minHeight: 0 }}>
         <div ref={containerRef} style={{ height: '100%', width: '100%' }} />
