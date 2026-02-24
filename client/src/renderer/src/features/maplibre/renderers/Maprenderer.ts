@@ -1,6 +1,7 @@
 import maplibregl from 'maplibre-gl'
 import { MapChildRenderer } from '../MapChildRenderer'
 import { MarkerRenderer } from '../MarkerRenderer'
+import { CircleRenderer } from '../CircleRenderer'
 
 interface Config {
   container: HTMLDivElement
@@ -13,6 +14,7 @@ export class MapRenderer {
   private children: MapChildRenderer[] = []
   private tick: () => void
   private markerRenderer: MarkerRenderer
+  private circleRenderer: CircleRenderer
 
   constructor(config: Config) {
     this.map = new maplibregl.Map({
@@ -22,17 +24,25 @@ export class MapRenderer {
       zoom: config.zoom
     })
     this.tick = () => {
-      for (const child of this.children) {
-        child.update(this.map)
+      if (this.map.loaded()) {
+        for (const child of this.children) {
+          child.update(this.map)
+        }
       }
       this.rafId = requestAnimationFrame(this.tick)
     }
     this.rafId = requestAnimationFrame(this.tick)
     this.markerRenderer = new MarkerRenderer(config.center)
     this.add(this.markerRenderer)
+    this.circleRenderer = new CircleRenderer(config.center)
+    this.add(this.circleRenderer)
   }
   add(child: MapChildRenderer): void {
     this.children.push(child)
+  }
+  moveTo(center: [number, number]): void {
+    this.markerRenderer.setCenter(center)
+    this.circleRenderer.setCenter(center)
   }
   destroy(): void {
     if (this.rafId !== null) {

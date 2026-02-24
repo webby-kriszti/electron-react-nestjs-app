@@ -1,5 +1,6 @@
 import { MapChildRenderer } from './MapChildRenderer'
 import maplibregl from 'maplibre-gl'
+import { useCityStore } from './stores/CityStore'
 
 export class MarkerRenderer implements MapChildRenderer {
   private dirty: boolean = false
@@ -7,8 +8,13 @@ export class MarkerRenderer implements MapChildRenderer {
   private center: [number, number]
   private marker: maplibregl.Marker | null = null
   private map: maplibregl.Map | null = null
+  private unsubFromPosition: (() => void) | null = null
   constructor(center: [number, number]) {
     this.center = center
+    this.unsubFromPosition = useCityStore.subscribe((state) => {
+      this.center = state.markerPosition
+      this.dirty = true
+    })
   }
   init(): void {
     this.marker = new maplibregl.Marker().setLngLat(this.center).addTo(this.map!)
@@ -24,10 +30,12 @@ export class MarkerRenderer implements MapChildRenderer {
     }
   }
   setCenter(center: [number, number]): void {
+    console.log('Hi')
     this.center = center
     this.dirty = true
   }
   destroy(): void {
+    this.unsubFromPosition?.()
     if (this.marker) {
       this.marker.remove()
       this.marker = null

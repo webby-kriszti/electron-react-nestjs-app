@@ -11,6 +11,6 @@
   },
   "dependencies": {
     "maplibre-gl": "^5.16.0",
-    "zustand": "^5.0.10"
+    "zustand": "^5.0.11"
   }
 }
