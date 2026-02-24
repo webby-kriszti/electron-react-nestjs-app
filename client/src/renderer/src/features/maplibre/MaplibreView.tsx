@@ -1,12 +1,11 @@
 import { ReactElement, useEffect, useRef } from 'react'
 import { MapRenderer } from '../../features/maplibre/renderers/Maprenderer'
 import { useCityStore } from '@renderer/features/maplibre/stores/CityStore'
-//import { MarkerRenderer } from './MarkerRenderer'
 
 export function MaplibreView(): ReactElement {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const mapRendererRef = useRef<MapRenderer | null>(null)
-  //const markerRendererRef = useRef<MarkerRenderer | null>(null)
+
 
   useEffect(() => {
     if (containerRef.current === null) return

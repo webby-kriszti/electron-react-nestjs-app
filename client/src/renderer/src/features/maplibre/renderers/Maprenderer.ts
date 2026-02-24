@@ -40,10 +40,6 @@ export class MapRenderer {
   add(child: MapChildRenderer): void {
     this.children.push(child)
   }
-  moveTo(center: [number, number]): void {
-    this.markerRenderer.setCenter(center)
-    this.circleRenderer.setCenter(center)
-  }
   destroy(): void {
     if (this.rafId !== null) {
       cancelAnimationFrame(this.rafId)

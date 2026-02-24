@@ -54,6 +54,9 @@ export class CircleRenderer implements MapChildRenderer {
     if (this.map?.getLayer(this.sourceId)) {
       this.map.removeLayer(this.sourceId)
     }
+    if (this.map?.getLayer(this.layerId)) {
+      this.map.removeLayer(this.layerId)
+    }
   }
   setCenter(center: [number, number]): void {
     this.center = center

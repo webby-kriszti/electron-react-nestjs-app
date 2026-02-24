@@ -27,6 +27,7 @@ export class MarkerRenderer implements MapChildRenderer {
     }
     if (this.dirty) {
       this.marker!.setLngLat(this.center)
+      this.dirty = false
     }
   }
   setCenter(center: [number, number]): void {
