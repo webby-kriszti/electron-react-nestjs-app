@@ -1,10 +1,13 @@
-import { ReactElement, useEffect, useRef } from 'react'
+import { ReactElement, useEffect, useRef, useState } from 'react'
 import { MapRenderer } from '../../features/maplibre/renderers/Maprenderer'
 import { cityService } from './stores/citiyService'
+import { deviceService } from './stores/DeviceService'
+import { useDeviceStore } from './stores/DeviceStore'
 
 export function MaplibreView(): ReactElement {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const mapRendererRef = useRef<MapRenderer | null>(null)
+  const [deviceName, setDeviceName] = useState('')
 
   useEffect(() => {
     if (containerRef.current === null) return
@@ -20,7 +23,6 @@ export function MaplibreView(): ReactElement {
       mapRendererRef.current = null
     }
   }, [])
-
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <div style={{ padding: 12 }}>
@@ -29,6 +31,21 @@ export function MaplibreView(): ReactElement {
         <button onClick={() => cityService.selectCity('Budapest')}>Budapest</button>
         <button onClick={cityService.startSimulation}>Start moving</button>
         <button onClick={cityService.stopSimulation}>Stop</button>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            deviceService.addDevice(deviceName, [19.04, 47.49])
+            setDeviceName('')
+          }}
+        >
+          <input
+            type="text"
+            value={deviceName}
+            placeholder="Enter name"
+            onChange={(e) => setDeviceName(e.target.value)}
+          />
+          <button type="submit">Send</button>
+        </form>
       </div>
       <div style={{ flex: 1, minHeight: 0 }}>
         <div ref={containerRef} style={{ height: '100%', width: '100%' }} />

@@ -25,6 +25,7 @@ export const useDeviceStore = create<DeviceStore>()(
         set((state) => ({ devices: { ...state.devices, [device.id]: device } })),
       removeDevice: (id) =>
         set((state) => {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { [id]: _, ...rest } = state.devices
           return { devices: rest }
         }),
