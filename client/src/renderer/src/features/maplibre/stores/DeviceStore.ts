@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { subscribeWithSelector } from 'zustand/middleware'
 
-interface Device {
+export interface Device {
   id: string
   name: string
   position: [number, number]
@@ -18,7 +18,7 @@ interface DeviceStore {
 }
 export const useDeviceStore = create<DeviceStore>()(
   subscribeWithSelector((set) => ({
-    devices: { 'device-1': { id: '11', name: 'Cat', position: [19, 47], isActive: true } },
+    devices: { '11': { id: '11', name: 'Cat', position: [19, 47], isActive: true } },
     selectedDeviceId: null,
     actions: {
       addDevice: (device) =>

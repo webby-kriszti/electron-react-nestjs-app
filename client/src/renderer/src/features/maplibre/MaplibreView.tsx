@@ -2,7 +2,6 @@ import { ReactElement, useEffect, useRef, useState } from 'react'
 import { MapRenderer } from '../../features/maplibre/renderers/Maprenderer'
 import { cityService } from './stores/citiyService'
 import { deviceService } from './stores/DeviceService'
-import { useDeviceStore } from './stores/DeviceStore'
 
 export function MaplibreView(): ReactElement {
   const containerRef = useRef<HTMLDivElement | null>(null)

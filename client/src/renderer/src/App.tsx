@@ -1,8 +1,9 @@
 import React, { useMemo, useState } from 'react'
-import { Week2Day1Test } from './learning/week-2/day1-test'
 import { MaplibreView } from './features/maplibre/MaplibreView'
+import DayIRefs from './learning/week-4/Day1-refs'
+import { DevicePanel } from './learning/week-4/DevicePanel'
 
-type TabId = 'legacy' | 'map_marker' | 'map_circle' | 'zustand' | 'learning_w1d2' | 'learning_w2d1'
+type TabId = 'legacy' | 'map_marker' | 'map_circle' | 'zustand' | 'learning_w1d2' | 'learning_w4d1'
 
 type TabDef = {
   id: TabId
@@ -16,7 +17,7 @@ const TABS: TabDef[] = [
   { id: 'zustand', label: 'Zustand' },
   /* { id: 'learning_w1d2', label: 'Learning - Week 1 day 2' }, */
   //{ id: 'learning_w1d3', label: 'Learning - Week 1 Day 3' }
-  { id: 'learning_w2d1', label: 'Learning - Week 2 Day 1' }
+  { id: 'learning_w4d1', label: 'Learning - Week 4 Day 1' }
 ]
 
 function TabButton({
@@ -99,8 +100,8 @@ function Content({ tab }: { tab: TabId }) {
       return <ZustandView />
     /* case 'learning_w1d2':
       return <Week1Day2Test /> */
-    case 'learning_w2d1':
-      return <Week2Day1Test />
+    case 'learning_w4d1':
+      return <DevicePanel />
     default:
       return null
   }
